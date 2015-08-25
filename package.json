@@ -1,0 +1,16 @@
+{
+  "name": "fits-typescript",
+  "version": "0.1.0",
+  "description": "A FITS library",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "Chris Lucas",
+  "license": "MIT",
+  "dependencies": {
+    "chai": "^3.2.0",
+    "mocha": "^2.2.5",
+    "sprintf-js": "^1.0.3"
+  }
+}
