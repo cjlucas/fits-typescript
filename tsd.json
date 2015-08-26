@@ -16,6 +16,9 @@
     },
     "sprintf-js/sprintf-js.d.ts": {
       "commit": "c5a2f44bab06cf9f2bcc14530171daac1cebff6c"
+    },
+    "node/node.d.ts": {
+      "commit": "71a7d5306ae4f9893aafd2d85d38aac8789ebf33"
     }
   }
 }

@@ -1,9 +1,8 @@
-/// <reference path="./typings/sprintf-js/sprintf-js.d.ts" />
-//
+/// <reference path="./typings/tsd.d.ts" />
 
 import * as sprintfMod from 'sprintf-js';
 
-var sprintf = sprintfMod.sprintf;
+var sprintf = require('sprintf-js').sprintf;
 
 class Keyword {
     private static CARD_LENGTH = 80;
@@ -32,10 +31,10 @@ class Keyword {
         s += sprintf('%20s ', value);
 
         var charsRemaining = Keyword.CARD_LENGTH - s.length - 2; // -2 for "/ "
-        var comment = this.comment.substring(0, Math.min(charsRemaining, this.comment.length));
 
-
-        s += sprintf(`/ %-${charsRemaining}s`, this.comment);
+        var comment = this.comment != null ? this.comment : '';
+        comment = comment.substring(0, Math.min(charsRemaining, comment.length));
+        s += sprintf(`/ %-${charsRemaining}s`, comment);
 
         return s;
     }
