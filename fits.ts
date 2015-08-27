@@ -6,13 +6,19 @@ var sprintf = require('sprintf-js').sprintf;
 
 class Keyword {
     private static CARD_LENGTH = 80;
+    private static MAX_KEYWORD_LEN = 8;
 
     constructor(private name: string,
             private value: any,
-            private comment?: string) {}
+            private comment?: string) {
+        if (name.length > Keyword.MAX_KEYWORD_LEN) {
+            throw new Error(`Given keyword exceeds the ${Keyword.MAX_KEYWORD_LEN} character limit`);
+        }
+    }
 
     asCard(): string {
-        var s = sprintf('%-s=', this.name);
+        var s = sprintf(`%-${Keyword.MAX_KEYWORD_LEN}s`, this.name);
+        s += '= ';
 
         var value: string;
 
