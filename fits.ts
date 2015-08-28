@@ -7,6 +7,7 @@ var sprintf = require('sprintf-js').sprintf;
 class Keyword {
     private static CARD_LENGTH = 80;
     private static MAX_KEYWORD_LEN = 8;
+    private static MAX_VALUE_LEN = 70;
 
     constructor(private name: string,
             private value: any,
@@ -21,17 +22,28 @@ class Keyword {
         s += '= ';
 
         var value: string;
-
-        if (typeof this.value == 'bool') {
+        console.log(typeof this.value);
+        if (typeof this.value == 'boolean') {
             value = this.value ? 'T' : 'F';
         } else if (typeof this.value == 'number') {
             var fmt = this.value === +value ? '%d' : '%e';
             // sprintf-js doesnt support %E, so hack away
             value = sprintf(fmt, this.value).replace('e', 'E');
         } else if (this.value === null) {
+            value = "''";
+        } else if (this.value === undefined) {
             value = '';
         } else {
-            value = sprintf("'%s'", this.value);
+            value = this.value.toString();
+            if (value.length == 0) {
+                value = ' ';
+            }
+
+            value = `'${value}'`;
+        }
+
+        if (value.length > Keyword.MAX_VALUE_LEN) {
+            throw new Error(`Value ${value} exceeds ${Keyword.MAX_VALUE_LEN} character limit`); 
         }
 
         s += sprintf('%20s ', value);
