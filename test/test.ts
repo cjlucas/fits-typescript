@@ -94,7 +94,7 @@ describe('HDU', () => {
     describe('constructor', () => {
         it('should include SIMPLE if primary header', (done) => {
            var hdu = new fits.HDU(true);
-            assertKeywordExists(hdu, new fits.Keyword('SIMPLE', true, null), 0);
+            assertKeywordExists(hdu, new fits.Keyword('SIMPLE', true), 0);
             done();
         });
 
@@ -103,6 +103,16 @@ describe('HDU', () => {
             var hdu2 = new fits.HDU(false); 
             assert.lengthOf(hdu1.getKeywords(), 0);
             assert.lengthOf(hdu2.getKeywords(), 0);
+            done();
+        });
+    });
+
+    describe('#addKeyword', () => {
+        it('should append a keyword to the keyword list', (done) => {
+            var hdu = new fits.HDU();
+            var kw = new fits.Keyword('TEST', 0);
+            assert.doesNotThrow(() => hdu.addKeyword(kw.getName(), kw.getValue()));
+            assertKeywordExists(hdu, kw, 0);
             done();
         });
     });
