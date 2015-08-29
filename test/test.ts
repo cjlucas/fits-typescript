@@ -6,26 +6,18 @@ import chai = require('chai');
 var assert = chai.assert;
 
 function assertCardMatches(card: string, expectedName: string, expectedValue: string, expectedComment?: string): void {
-    var errMsg: string = null;
-
-    if (card.length < 80) {
-        errMsg = 'Card length should be 80 characters';
-    }
-    if (card.substr(0, 8) !== expectedName) {
-        errMsg = 'Keyword did not match';
-    }
-
-    if (card.substr(8, 2) !== '= ') {
-        errMsg = 'Value indicator not found';
-    }
+    assert.equal(card.length, 80, 'Card length should be 80 characters');
+    assert.equal(card.substr(0, 8), expectedName);
+    assert.equal(card.substr(8, 2), '= ', 'Value indicator not found');
 
     var valComm = card.substr(10).trim();
 
-    // If expected value but no value found (left-trimmed to comment)
-    if (typeof expectedValue === 'string' && (valComm[0] == '/'
-        || valComm.substr(0, expectedValue.length) !== expectedValue) {
-        errMsg = `Expected value ${expectedValue} not found in card`;
+    if (expectedValue !== undefined
+            && (valComm.length == 0 || valComm[0] === '/')) {
+        assert.fail(card, null, "Expected value, but found comment");
     }
+
+    assert.equal(card.substr(0, expectedValue.length), expectedValue);
 
     var comm = valComm.substr(expectedValue.length).trim();
 
