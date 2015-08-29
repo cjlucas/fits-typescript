@@ -1,10 +1,8 @@
 /// <reference path="./typings/tsd.d.ts" />
 
-import * as sprintfMod from 'sprintf-js';
+import {sprintf} from 'sprintf-js';
 
-var sprintf = require('sprintf-js').sprintf;
-
-class Keyword {
+export class Keyword {
     private static CARD_LENGTH = 80;
     private static MAX_KEYWORD_LEN = 8;
     private static MAX_VALUE_LEN = 70;
@@ -17,12 +15,15 @@ class Keyword {
         }
     }
 
+    getName = (): string => this.name;
+    getValue = (): any => this.value;
+    getComment = (): string => this.comment;
+
     asCard(): string {
         var s = sprintf(`%-${Keyword.MAX_KEYWORD_LEN}s`, this.name);
         s += '= ';
 
         var value: string;
-        console.log(typeof this.value);
         if (typeof this.value == 'boolean') {
             value = this.value ? 'T' : 'F';
         } else if (typeof this.value == 'number') {
@@ -58,12 +59,22 @@ class Keyword {
     }
 }
 
-class HDU {
-    private keyword: Keyword[];
+export class HDU {
+    private keywords: Keyword[] = [];
 
-}
+    constructor(primary?: boolean) {
+        if (primary) {
+            this.addKeyword('SIMPLE', true, null);
+        } 
+    }
 
-export = {
-    Keyword: Keyword,
-    HDU: HDU,
+    addKeyword(name: string, value: any, comment?: string): void {
+        this.keywords.push(new Keyword(name, value, comment));
+    }
+
+    getKeywords(): Keyword[] {
+        return this.keywords.slice();
+
+    }
+
 }
