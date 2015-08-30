@@ -87,6 +87,18 @@ describe('Keyword', () => {
                     'TARGET  ', undefined, null);
             done();
         });
+
+        it('should return a valid card with a number', (done) => {
+            assertCardMatches(new fits.Keyword('TARGET', 100, null).asCard(),
+                    'TARGET  ', '100', null);
+            done();
+        });
+        
+        it('should return a valid card with a decimal', (done) => {
+            assertCardMatches(new fits.Keyword('TARGET', 1234.5, null).asCard(),
+                    'TARGET  ', '1.2345E+3', null);
+            done();
+        });
     });
 });
 
