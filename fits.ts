@@ -15,6 +15,8 @@ export enum ImageType {
     Float64
 }
 
+const ASCII_WHITESPACE = 32;
+
 export class Keyword {
     private static CARD_LENGTH = 80;
     private static MAX_KEYWORD_LEN = 8;
@@ -64,7 +66,7 @@ export class Keyword {
 
         var charsRemaining = Keyword.CARD_LENGTH - s.length - 2; // -2 for "/ "
 
-        var comment = this.comment != null ? this.comment : '';
+        var comment = this.comment != null ? this.comment : 'hithere';
         comment = comment.substring(0, Math.min(charsRemaining, comment.length));
         s += sprintf(`/ %-${charsRemaining}s`, comment);
 
@@ -72,8 +74,8 @@ export class Keyword {
     }
 }
 
-export class HDU {
-    private static BLOCK_SIZE = 2880;
+class HDU {
+    protected static BLOCK_SIZE = 2880;
     private keywords: Keyword[] = [];
 
     constructor(primary?: boolean) {
@@ -88,7 +90,7 @@ export class HDU {
 
     getKeywords = (): Keyword[] => this.keywords.slice();
 
-    private writeToArray(dest: Uint8Array): number {
+    protected writeToArray(dest: Uint8Array): number {
         var bytesWritten = 0;
         var keywords = this.getKeywords();
         for (var i = 0; i < keywords.length; i++) {
@@ -99,19 +101,19 @@ export class HDU {
             }
         }
 
-        for (var i = 0; i < bytesWritten % HDU.BLOCK_SIZE; i++) {
-            dest[bytesWritten] = 32; // 32 = ' '
+        var end = 'END';
+        for (var i = 0; i < end.length; i++) {
+            dest[bytesWritten] = end.charCodeAt(i);
+            bytesWritten++;
+        }
+       
+        var bytesLeft = HDU.BLOCK_SIZE - (bytesWritten % HDU.BLOCK_SIZE);
+        for (var i = 0; i < bytesLeft; i++) {
+            dest[bytesWritten] = ASCII_WHITESPACE;
             bytesWritten++;
         }
 
         return bytesWritten;
-    }
-
-    write(): Uint8Array {
-        var dest = new Uint8Array(HDU.BLOCK_SIZE);
-        this.writeToArray(dest);
-
-        return dest;
     }
 }
 
@@ -121,6 +123,8 @@ export class ImageHDU extends HDU {
     setImage(imageType: ImageType, axes: number[], imageData: ArrayBuffer) {
         var bitpix: number;
         var bzero = 0;
+
+        // FIXME: signed support is broken
         switch (imageType) {
             case ImageType.UInt8:
                bitpix = 8;
@@ -164,19 +168,47 @@ export class ImageHDU extends HDU {
                break;
         } 
 
-        this.addKeyword('BIXPIX', bitpix);
-        this.addKeyword('BZERO', bzero);
+        this.addKeyword('BITPIX', bitpix);
         this.addKeyword('NAXIS', axes.length);
+
         for (var i = 1; i <= axes.length; i++) {
             this.addKeyword(`NAXIS${i}`, axes[i-1]);
         }
+        
+        this.addKeyword('EXTEND', true);
 
         this.imageData = imageData;
     }
 
+    protected writeToArray(dest: Uint8Array): number {
+        var bytesWritten = super.writeToArray(dest);
+        console.log(bytesWritten);
+        
+        var src = new Uint8Array(this.imageData);
+        for (var i = 0; i < src.byteLength; i++) {
+            dest[bytesWritten] = src[i];
+            bytesWritten++;
+        }
+
+        var bytesLeft = HDU.BLOCK_SIZE - (bytesWritten % HDU.BLOCK_SIZE);
+        for (var i = 0; i < bytesLeft; i++) {
+            dest[bytesWritten] = ASCII_WHITESPACE;
+            bytesWritten++;
+        }
+
+        console.log(bytesWritten);
+        return bytesWritten;
+    }
+
     write(): Uint8Array {
-        var blah = new Uint8Array(2880);
-        super.writeToArray(blah);
+        var bytesToWrite = HDU.BLOCK_SIZE + this.imageData.byteLength;
+        bytesToWrite += HDU.BLOCK_SIZE - (bytesToWrite % HDU.BLOCK_SIZE);
+
+        console.log(this.imageData.byteLength, bytesToWrite);
+
+        var blah = new Uint8Array(bytesToWrite);
+        this.writeToArray(blah);
+
         return blah; 
     }
 }
