@@ -59,7 +59,7 @@ export class Keyword {
         }
 
         if (value.length > Keyword.MAX_VALUE_LEN) {
-            throw new Error(`Value ${value} exceeds ${Keyword.MAX_VALUE_LEN} character limit`); 
+            throw new Error(`Value ${value} exceeds ${Keyword.MAX_VALUE_LEN} character limit`);
         }
 
         s += sprintf('%20s ', value);
@@ -81,7 +81,7 @@ class HDU {
     constructor(primary?: boolean) {
         if (primary) {
             this.addKeyword('SIMPLE', true, null);
-        } 
+        }
     }
 
     addKeyword(name: string, value: any, comment?: string): void {
@@ -106,7 +106,7 @@ class HDU {
             dest[bytesWritten] = end.charCodeAt(i);
             bytesWritten++;
         }
-       
+
         var bytesLeft = HDU.BLOCK_SIZE - (bytesWritten % HDU.BLOCK_SIZE);
         for (var i = 0; i < bytesLeft; i++) {
             dest[bytesWritten] = ASCII_WHITESPACE;
@@ -166,7 +166,7 @@ export class ImageHDU extends HDU {
                bitpix = -64;
                bzero = 0; // fixme
                break;
-        } 
+        }
 
         this.addKeyword('BITPIX', bitpix);
         this.addKeyword('NAXIS', axes.length);
@@ -174,7 +174,7 @@ export class ImageHDU extends HDU {
         for (var i = 1; i <= axes.length; i++) {
             this.addKeyword(`NAXIS${i}`, axes[i-1]);
         }
-        
+
         this.addKeyword('EXTEND', true);
 
         this.imageData = imageData;
@@ -183,7 +183,7 @@ export class ImageHDU extends HDU {
     protected writeToArray(dest: Uint8Array): number {
         var bytesWritten = super.writeToArray(dest);
         console.log(bytesWritten);
-        
+
         var src = new Uint8Array(this.imageData);
         for (var i = 0; i < src.byteLength; i++) {
             dest[bytesWritten] = src[i];
@@ -209,6 +209,6 @@ export class ImageHDU extends HDU {
         var blah = new Uint8Array(bytesToWrite);
         this.writeToArray(blah);
 
-        return blah; 
+        return blah;
     }
 }
