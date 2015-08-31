@@ -1,6 +1,8 @@
 /// <reference path="../typings/tsd.d.ts" />
 
-import fits = require('../fits');
+require('blanket');
+
+import fits = require('../src/fits');
 import {assert} from 'chai';
 
 function assertCardMatches(card: string,
@@ -93,7 +95,7 @@ describe('Keyword', () => {
                     'TARGET  ', '100', null);
             done();
         });
-        
+
         it('should return a valid card with a decimal', (done) => {
             assertCardMatches(new fits.Keyword('TARGET', 1234.5, null).asCard(),
                     'TARGET  ', '1.2345E+3', null);
@@ -111,8 +113,8 @@ describe('HDU', () => {
         });
 
         it('should not include SIMPLE if secondary header', (done) => {
-            var hdu1 = new fits.HDU(); 
-            var hdu2 = new fits.HDU(false); 
+            var hdu1 = new fits.HDU();
+            var hdu2 = new fits.HDU(false);
             assert.lengthOf(hdu1.getKeywords(), 0);
             assert.lengthOf(hdu2.getKeywords(), 0);
             done();
