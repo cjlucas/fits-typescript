@@ -1,7 +1,5 @@
 /// <reference path="../typings/tsd.d.ts" />
 
-require('blanket');
-
 import fits = require('../src/fits');
 import {assert} from 'chai';
 

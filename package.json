@@ -1,16 +1,14 @@
-{
-  "name": "fits-typescript",
-  "version": "0.1.0",
-  "description": "A FITS library",
-  "main": "index.js",
-  "scripts": {
-    "test": "mocha"
-  },
-  "author": "Chris Lucas",
-  "license": "MIT",
-  "dependencies": {
-    "chai": "^3.2.0",
-    "mocha": "^2.2.5",
-    "sprintf-js": "^1.0.3"
-  }
-}
+var gulp = require('gulp');
+var ts = require('gulp-typescript');
+var mocha = require('gulp-mocha');
+
+gulp.task('default', function() {
+    return gulp.src(['src/**/*.ts', 'test/**/*.ts', 'typings/tsd.d.ts'])
+        .pipe(ts(ts.createProject('tsconfig.json')))
+        .pipe(gulp.dest('build/'))
+});
+
+gulp.task('test', ['default'], function() {
+    return gulp.src('build/test.js', {read: false})
+        .pipe(mocha());
+});

@@ -1,5 +1,3 @@
-/// <reference path="./typings/tsd.d.ts" />
-
 import {sprintf} from 'sprintf-js';
 
 export enum ImageType {
@@ -74,7 +72,7 @@ export class Keyword {
     }
 }
 
-class HDU {
+export class HDU {
     protected static BLOCK_SIZE = 2880;
     private keywords: Keyword[] = [];
 
